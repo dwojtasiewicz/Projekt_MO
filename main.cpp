@@ -46,7 +46,7 @@ void inicjujDane(int N)
     IloscKolumn= N;
     /*ustalamy parametr lambda (dla metod bezposrednich jest rowny 0.4
     - w naszym przypadku jest rowny 1*/
-    Lambda= 1.0;
+    Lambda= 0.4;
     /*ustalamy t poczatkowe*/
     t0= 0.0;
     /*ustalamy t koncowe*/
@@ -152,7 +152,7 @@ void KMetodaBezposrednia()
 
     /*for(int k = 0; k < IloscWierszy; k++)
     {
-       double Temp_x = -a;
+       double Temp_x = 0;
        double MaxBlad = 0.0;
        if(k == IloscWierszy-1)
        {
@@ -172,9 +172,9 @@ void KMetodaBezposrednia()
 
     // Algorytm zoptymalizowany do podpunktu (3)
 
-    /*for(int k = 0; k < IloscWierszy; k++)
+    for(int k = 0; k < IloscWierszy; k++)
     {
-        double Temp_x = -a;
+        double Temp_x = 0;
         double MaxBlad = 0.0;
         for(int in = 0; in < IloscKolumn; in++)
         {
@@ -190,7 +190,7 @@ void KMetodaBezposrednia()
             Pomiary << "MaxBlad: \t" <<MaxBlad << endl;
         }
         Temp_t += dt;
-    }*/
+    }
 }
 
 
@@ -356,8 +356,8 @@ int main()
     pocz= Czas();
 
     /*wykonuje metode Laasonena lub Cranka-Nicholsona*/
-    //KMetodaBezposrednia();
-    Laasonen();
+    KMetodaBezposrednia();
+    //Laasonen();
 
     /*teraz sprawdzam ile czasu uplynelo*/
     kon= Czas();
