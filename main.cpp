@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sys/timeb.h>
 #include <iostream>
-#include<math.h>
+#include <math.h>
 using namespace std;
 
 /*zmienne plikowe*/
@@ -96,16 +96,16 @@ void Thomas(double *l, double *ni, double *u, double*x, double *B)
 double RownanieAnalityczne(double x, double t)
 {
 
-    return erfc(x/(2.0*sqrt(D*t)));
+    return erfc(x/(2*sqrt(D*t)));
 }
 
 /*metoda ustalajaca warunki poczatkowe i brzegowe*/
 void Warunki()
 {
     /*poczatek przedzialu x*/
-    double x= -a;
+    double x= 0;
     /*obliczamy przyrost*/
-    double Delta_x= (a+ a)/ (IloscKolumn- 1);
+    double Delta_x= (a)/ (IloscKolumn- 1);
     /*ustalamy warunki poczatkowe*/
     for(int i= 0; i< IloscKolumn; i++)
     {
@@ -114,7 +114,7 @@ void Warunki()
     /*ustalamy warunki brzegowe*/
     for(int j= 0; j< IloscWierszy; j++)
     {
-        Tablica[0][j]= 1;
+        Tablica[j][0]= 1;
         Tablica[j][IloscKolumn-1]= 0;
     }
 }
@@ -149,8 +149,8 @@ void KMetodaBezposrednia()
         }
     }
     // Algorytm zoptymalizowany do podpunktu (1)
-    /*
-    for(int k = 0; k < IloscWierszy; k++)
+
+    /*for(int k = 0; k < IloscWierszy; k++)
     {
        double Temp_x = -a;
        double MaxBlad = 0.0;
@@ -172,7 +172,7 @@ void KMetodaBezposrednia()
 
     // Algorytm zoptymalizowany do podpunktu (3)
 
-    for(int k = 0; k < IloscWierszy; k++)
+    /*for(int k = 0; k < IloscWierszy; k++)
     {
         double Temp_x = -a;
         double MaxBlad = 0.0;
@@ -190,7 +190,7 @@ void KMetodaBezposrednia()
             Pomiary << "MaxBlad: \t" <<MaxBlad << endl;
         }
         Temp_t += dt;
-    }
+    }*/
 }
 
 
@@ -230,10 +230,10 @@ void Laasonen()
     for(int k= 0; k< IloscWierszy; k++)
     {
         /*ustalam brzegowe x*/
-        double Temp_x=-a;
+        double Temp_x=0.0;
 
         /*wpisuje ustalone warunki brzegowe*/
-        WektorB[0]= 0.0;
+        WektorB[0]= 1.0;
         WektorB[IloscKolumn-1]= 0.0;
 
         /*w tym przypadku juz nie wystepuje mnozenie macierzy przez wektor*/
@@ -356,8 +356,8 @@ int main()
     pocz= Czas();
 
     /*wykonuje metode Laasonena lub Cranka-Nicholsona*/
-    KMetodaBezposrednia();
-    //Laasonen();
+    //KMetodaBezposrednia();
+    Laasonen();
 
     /*teraz sprawdzam ile czasu uplynelo*/
     kon= Czas();
