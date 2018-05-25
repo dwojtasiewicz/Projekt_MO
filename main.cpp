@@ -52,7 +52,7 @@ void inicjujDane(int N)
     /*ustalamy t koncowe*/
     tMax=2.0;
     /*ustalamy parametry b i D*/
-    b= 0.1;
+   // b= 0.1;
     D= 1.0;
 
     /*obliczamy a, h, t, dt oraz liczbe wierszy macierzy*/
@@ -96,7 +96,7 @@ void Thomas(double *l, double *ni, double *u, double*x, double *B)
 double RownanieAnalityczne(double x, double t)
 {
 
-    return 0.5* exp( ( ( D* t )/ ( b* b ) )- ( x/ b ) )* erfc( ( ( 2* D* t )/ b- x )/ ( 2* sqrt( D* t ) ) );
+    return erfc(x/(2.0*sqrt(D*t)));
 }
 
 /*metoda ustalajaca warunki poczatkowe i brzegowe*/
@@ -109,16 +109,12 @@ void Warunki()
     /*ustalamy warunki poczatkowe*/
     for(int i= 0; i< IloscKolumn; i++)
     {
-        if(x< 0)
             Tablica[0][i]= 0;
-        else
-            Tablica[0][i]= exp(-(x/ b));
-        x+= Delta_x;
     }
     /*ustalamy warunki brzegowe*/
     for(int j= 0; j< IloscWierszy; j++)
     {
-        Tablica[j][0]= 0;
+        Tablica[0][j]= 1;
         Tablica[j][IloscKolumn-1]= 0;
     }
 }
