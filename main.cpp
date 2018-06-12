@@ -39,6 +39,7 @@ int IloscKolumn;
 int IloscWierszy;
 
 
+
 /*metoda inicjujaca dane dla N kolumn*/
 void inicjujDane(int N)
 {
@@ -46,7 +47,7 @@ void inicjujDane(int N)
     IloscKolumn= N;
     /*ustalamy parametr lambda (dla metod bezposrednich jest rowny 0.4
     - w naszym przypadku jest rowny 1*/
-    Lambda= 0.4;
+    Lambda= 1.0;
     /*ustalamy t poczatkowe*/
     t0= 0.0;
     /*ustalamy t koncowe*/
@@ -184,10 +185,10 @@ void KMetodaBezposrednia()
             }
             Temp_x += h;
         }
-        MaxBledy << Temp_t << "\t" << MaxBlad << endl;
+        MaxBledy << Temp_t << ";" << MaxBlad << endl;
         if(k == IloscWierszy-1)
         {
-            Pomiary << "MaxBlad: \t" <<MaxBlad << endl;
+            Pomiary << "MaxBlad: ;" <<MaxBlad << endl;
         }
         Temp_t += dt;
     }
@@ -199,13 +200,13 @@ void KMetodaBezposrednia()
 /*metoda dyskretyzacji Laasonena*/
 void Laasonen()
 {
+
     double *Ni = new double[IloscKolumn];
     double *L = new double[IloscKolumn];
     double *D=new double[IloscKolumn];
     double *U=new double[IloscKolumn];
     double *WektorB=new double[IloscKolumn];
     double *WektorX=new double[IloscKolumn];
-
     /*ustalam poczatkowe t*/
     double Temp_t = 0.0;
 
@@ -265,12 +266,12 @@ void Laasonen()
         }
 
         /*zapisuje blad maksymalny do pliku*/
-        MaxBledy<< Temp_t<< "\t"<< MaxBlad<< "\n";
+        MaxBledy<< Temp_t<< ";"<< MaxBlad<< ";\n";
 
         /*Tutaj pomocniczo zapisuje sobie czas wykonania i blad dla t_max do oddzielnego pliku*/
         if(k== IloscWierszy- 1)
         {
-            Pomiary<< "MaxBlad: \t"<< MaxBlad<< "\n";
+            Pomiary<< "MaxBlad: "<< MaxBlad<< ";\n";
         }
         /*zwiekszam t o przyrost czasowy dt*/
         Temp_t += dt;
@@ -278,10 +279,11 @@ void Laasonen()
     }
 }
 
+
 /*metoda sluzaca do zapisywania rezultatow obliczania analitycznego do pliku*/
 void DrukujAnalityczna(int IloscWierszy, int IloscKolumn, double x, double h)
 {
-    Analitycznie.open("TablicaAnalityczna.txt");
+    Analitycznie.open("TablicaAnalityczna.csv");
     /*tworze sobie tablice*/
     double **Tablica = new double *[IloscWierszy];
     for(int i= 0; i< IloscWierszy ; i++)
@@ -290,13 +292,13 @@ void DrukujAnalityczna(int IloscWierszy, int IloscKolumn, double x, double h)
     }
 
     /*Wpisuje sobie najpierw arugenty do pliku*/
-    Analitycznie << "\t";
+    Analitycznie << ";";
     for(int k = 0; k < IloscKolumn ; k++)
     {
-        Analitycznie<< x<< "\t";
+        Analitycznie<< x<< ";";
         x+= h;
     }
-    Analitycznie<< "\n";
+    Analitycznie<< ";\n";
 
 
     /*teraz obliczam wyniki dla rownania analitycznego przy zmiennym czasie T i zapisuje do pliku*/
@@ -305,17 +307,19 @@ void DrukujAnalityczna(int IloscWierszy, int IloscKolumn, double x, double h)
     for(int i= 0; i< IloscWierszy; i++)
     {
         double x= -a;
-        Analitycznie<< t<< "\t";
+        Analitycznie<< t<< ";";
         for(int k= 0; k< IloscKolumn; k++)
         {
-            Analitycznie<< RownanieAnalityczne(x,t)<< "\t";
+            Analitycznie<< RownanieAnalityczne(x,t)<< ";";
             x+= h;
 
         }
-        Analitycznie<< "\n";
+        Analitycznie<< ";\n";
         t+= dt;
     }
 }
+
+
 
 /*metoda pomocnicza sluzaca do obliczania czasu (w sekundach) wykonywania sie programu*/
 double Czas()
@@ -332,10 +336,10 @@ double Czas()
 int main()
 {
     /*otwieram sobie pliki z pomiarami i z bledami*/
-    Pomiary.open("Pomiary.txt");
-    MaxBledy.open("BledyMax.txt");
+    Pomiary.open("Pomiary.csv");
+    MaxBledy.open("BledyMax.csv");
     /*uzupelniam pierwszy wiersz pliku z bledami*/
-    MaxBledy<< "t"<< "\t"<< "MaxBlad"<< "\n";
+    MaxBledy<< "t"<< ";"<< "MaxBlad"<< ";\n";
     /*ilosc kolumn macierzy*/
     int N=500;
     /*zmienne pomocnicze przy liczeniu czasu*/
@@ -356,8 +360,8 @@ int main()
     pocz= Czas();
 
     /*wykonuje metode Laasonena lub Cranka-Nicholsona*/
-    KMetodaBezposrednia();
-    //Laasonen();
+   //KMetodaBezposrednia();
+    Laasonen();
 
     /*teraz sprawdzam ile czasu uplynelo*/
     kon= Czas();

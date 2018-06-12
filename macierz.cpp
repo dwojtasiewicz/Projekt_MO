@@ -28,20 +28,20 @@ double** TworzMacierz(int IloscWierszy, int IloscKolumn)
 void DrukujMacierz(double **Tablica, int IloscWierszy, int IloscKolumn, double x, double h, double d, double dt)
 {
 
-    plik.open("MojaTablica.txt");
+    plik.open("MojaTablica.csv");
     plik << "\t";
     for(int k = 0; k < IloscKolumn ; k++)
     {
-        plik << x << "\t";
+        plik << x << ";";
         x +=h;
     }plik << endl;
     for(int i = 0; i < IloscWierszy ; i++)
     {
-        plik << d << "\t";
+        plik << d << ";";
         for(int k = 0; k < IloscKolumn ; k++)
         {
             // cout << Tablica[i][k] << " ";
-            plik << Tablica[i][k] << "\t";
+            plik << Tablica[i][k] << ";";
         }plik << endl;
         d += dt;
     }
