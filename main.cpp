@@ -47,7 +47,7 @@ void inicjujDane(int N)
     IloscKolumn= N;
     /*ustalamy parametr lambda (dla metod bezposrednich jest rowny 0.4
     - w naszym przypadku jest rowny 1*/
-    Lambda= 1.0;
+    Lambda= .4;
     /*ustalamy t poczatkowe*/
     t0= 0.0;
     /*ustalamy t koncowe*/
@@ -137,6 +137,53 @@ void WypiszDane()
          << "________________________________________________________________________________\n";
 }
 
+void dekompozycja_LU(double **A, double *b, double *wyn)
+{
+    //Dekompozycja LU macierzy- metoda eliminacji Gaussa
+    double x;
+    int M=IloscKolumn;
+    for(int k=0; k<M-1; k++)
+    {
+        for(int i=k+1; i<M; i++)
+        {
+            x = A[i][k]/A[k][k];
+            A[i][k] = x;
+            for(int j=k+1; j<M; j++)
+            {
+                A[i][j] = A[i][j] - (x*A[k][j]);
+            }
+        }
+    }
+
+    //Rozwi�zywanie uk�adu r�wna�
+    double suma;
+    double *z = new double[M];
+
+    //podstawianie w prz�d
+    for(int i=0; i<M; i++)
+    {
+        suma = 0;
+        for(int j=0; j<=i-1; j++)
+        {
+            suma += A[i][j]*z[j];
+        }
+
+        z[i] = b[i]-suma;
+    }
+
+    //podstawianie w ty�
+    for(int i=M-1; i>=0; i--)
+    {
+        suma = 0;
+        for(int j=i+1; j<M; j++)
+        {
+            suma +=A[i][j]*wyn[j];
+        }
+
+        wyn[i] = (z[i]-suma)/A[i][i];
+    }
+}
+
 /*metoda klasyczna bezposrednia*/
 void KMetodaBezposrednia()
 {
@@ -205,6 +252,13 @@ void Laasonen()
     double *L = new double[IloscKolumn];
     double *D=new double[IloscKolumn];
     double *U=new double[IloscKolumn];
+    double **A=new double*[IloscKolumn];
+    for (int j = 0; j < IloscKolumn; ++j) {
+        A[j]=new double[IloscKolumn];
+        for (int i = 0; i < IloscKolumn; ++i) {
+            A[j][i]=0;
+        }
+    }
     double *WektorB=new double[IloscKolumn];
     double *WektorX=new double[IloscKolumn];
     /*ustalam poczatkowe t*/
@@ -218,11 +272,21 @@ void Laasonen()
         U[i]= Lambda;
     }
 
+    for (int l = 0; l < IloscKolumn; ++l) {
+        try {
+            A[l][l - 1] = L[l];
+            A[l][l] = D[l];
+            A[l][l + 1] = U[l];
+        }
+        catch(exception){
+            continue;
+        }
+    }
     /*Uzupelniam macierze L,D,U o zalozenia*/
-    L[IloscKolumn-1]= 0.0;
-    U[0]= 0.0;
-    D[0]= 1.0;
-    D[IloscKolumn-1]= 1.0;
+    A[IloscKolumn-1][IloscKolumn-1]= 0.0;
+    A[0][1]= 0.0;
+    A[0][0]= 1.0;
+    A[IloscKolumn-1][IloscKolumn-1]= 1.0;
 
     /*wypelniam wektor Ni, ktory jest pomocny przy rozwiazywaniu ukladu metoda Thomasa*/
     Ni = TworzNi(L,D,U);
@@ -244,7 +308,8 @@ void Laasonen()
         }
 
         /*rozwiazujemy nasz uklad metoda Thomasa*/
-        Thomas(L,Ni,U,WektorX,WektorB);
+        //Thomas(L,Ni,U,WektorX,WektorB);
+        dekompozycja_LU(A,WektorB,WektorX);
 
         /*Uzupelniam nasza macierz wynikowa o wyliczony wektor X*/
         if(k== IloscWierszy- 1);
@@ -274,6 +339,7 @@ void Laasonen()
             Pomiary<< "MaxBlad: "<< MaxBlad<< ";\n";
         }
         /*zwiekszam t o przyrost czasowy dt*/
+        cout << k << endl;
         Temp_t += dt;
 
     }
@@ -360,8 +426,8 @@ int main()
     pocz= Czas();
 
     /*wykonuje metode Laasonena lub Cranka-Nicholsona*/
-   //KMetodaBezposrednia();
-    Laasonen();
+    KMetodaBezposrednia();
+    //Laasonen();
 
     /*teraz sprawdzam ile czasu uplynelo*/
     kon= Czas();
