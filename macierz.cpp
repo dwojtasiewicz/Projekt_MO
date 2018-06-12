@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 using namespace std;
 ofstream plik;
@@ -27,7 +28,6 @@ double** TworzMacierz(int IloscWierszy, int IloscKolumn)
 
 void DrukujMacierz(double **Tablica, int IloscWierszy, int IloscKolumn, double x, double h, double d, double dt)
 {
-
     plik.open("MojaTablica.csv");
     plik << "\t";
     for(int k = 0; k < IloscKolumn ; k++)
